@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Règles du 4 en ligne — Turbonix</title>
+  <meta name="description" content="Toutes les règles du 4 en ligne : classique, limité, éclair, gravité inversée, rotation, bombe, inversé, brouillard et les autres.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script>
+    // Applique le thème avant l'affichage pour éviter un flash
+    (function () {
+      var prefs = {};
+      try { prefs = JSON.parse(localStorage.getItem("tx-prefs")) || {}; } catch (e) {}
+      var theme = prefs.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="turbonix.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="rules-page">
+  <div class="bg-blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="site-title">4 <span>en</span> ligne</h1>
+      <div class="header-right">
+        <a href="index.html" class="hbtn" title="Retour au jeu" aria-label="Retour au jeu">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </a>
+        <button id="themeBtn" class="theme-toggle" aria-label="Changer de thème" title="Mode sombre / clair">
+          <span class="theme-icon sun">☀️</span>
+          <span class="theme-icon moon">🌙</span>
+        </button>
+        <a href="index.html" class="logo" aria-label="Turbonix Entertainment">
+          <img src="logo.svg" alt="Logo Turbonix" width="44" height="44">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="card rules-nav" aria-label="Sommaire des règles">
+      <div class="presets">
+        <a class="chip" href="#classique">🎯 Classique</a>
+        <a class="chip" href="#limite">♻️ Limité</a>
+        <a class="chip" href="#eclair">⚡ Éclair</a>
+        <a class="chip" href="#inversee">🧲 Gravité inversée</a>
+        <a class="chip" href="#rotation">🔄 Rotation</a>
+        <a class="chip" href="#multi">🎉 3-4 joueurs</a>
+        <a class="chip" href="#bombe">💣 Bombe</a>
+        <a class="chip" href="#inverse">🙃 Inversé</a>
+        <a class="chip" href="#gravite">🪨 Gravité</a>
+        <a class="chip" href="#brouillard">🌫️ Brouillard</a>
+        <a class="chip" href="#sans">🪐 Sans gravité</a>
+        <a class="chip" href="#tournoi">🏆 Tournoi</a>
+        <a class="chip" href="#commun">⚙️ Pour tous</a>
+      </div>
+    </nav>
+
+    <section class="card rules-card" id="classique">
+      <h2>🎯 Classique</h2>
+      <p><strong>But :</strong> être le premier à aligner 4 pions de ta couleur.</p>
+      <ol>
+        <li>Chacun son tour, tu lâches un pion dans une colonne. Il tombe jusqu’à la case libre la plus basse.</li>
+        <li>Une ligne compte à l’horizontale, à la verticale ou en diagonale.</li>
+        <li>Si la grille est pleine et que personne n’a aligné, c’est une égalité.</li>
+      </ol>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./...O.../..OX.../.OXXX..","arrow":5,"t":"Le pion va tomber tout en bas de la colonne 6"},{"b":"......./......./.....X./....XO./...XOO./..XOOX.","line":["2,5","5,2"],"t":"4 en diagonale : le jaune gagne"}]'></div>
+      <p>La version d’origine se joue sur une grille de <strong>7×6</strong>, avec <strong>4 en ligne</strong>. Tu peux changer :</p>
+      <ul>
+        <li><strong>La grille :</strong> 5×4, 6×5, 7×6, 8×7, 9×8 ou 10×9.</li>
+        <li><strong>Le nombre à aligner :</strong> de 3 à 7. Sur les petites grilles, les lignes trop longues pour tenir sont désactivées.</li>
+      </ul>
+      <p class="info">💡 Sur la grille classique, celui qui commence dans la colonne du milieu peut toujours gagner s’il joue parfaitement. Le problème, c’est de jouer parfaitement…</p>
+    </section>
+
+    <section class="card rules-card" id="limite">
+      <h2>♻️ Limité</h2>
+      <p><strong>But :</strong> aligner tes pions, alors que tu n’as droit qu’à un nombre limité de pions sur la grille. Tu choisis ce nombre.</p>
+      <ol>
+        <li>Quand tu poses un pion de plus que la limite, ton <strong>plus ancien</strong> est retiré.</li>
+        <li>Toute la colonne au-dessus de lui retombe d’une case.</li>
+        <li>Le pion qui partira au prochain coup clignote pour te prévenir.</li>
+        <li>La limite ne peut pas être plus petite que le nombre de pions à aligner.</li>
+      </ol>
+      <div class="demo-row" data-demos='[{"b":"......./......./..O..../..X.O../X.O.X../X.X.O..","mark":["0,5"],"t":"Limite atteinte : ce pion est le plus ancien"},{"arrowNext":true},{"b":"......./......./..O..../..X.O../..O.X../X.X.OX.","t":"Le jaune pose un pion : l’ancien part, la colonne tombe"}]'></div>
+      <p><strong>Attention :</strong> quand des pions retombent, ça peut créer une ligne, même pour ton adversaire ! Si les deux joueurs alignent en même temps, c’est celui qui vient de jouer qui l’emporte.</p>
+      <p><strong>Égalité :</strong> si la même position revient 3 fois, ou si la partie devient vraiment trop longue.</p>
+    </section>
+
+    <section class="card rules-card" id="eclair">
+      <h2>⚡ Éclair</h2>
+      <p><strong>But :</strong> le même, mais avec un temps limité par coup. Tu choisis ce temps.</p>
+      <ul>
+        <li>La barre sous les noms montre le temps qu’il te reste. Elle devient rouge pour les dernières secondes.</li>
+        <li>Si le temps est écoulé, <strong>un coup est joué au hasard</strong> à ta place.</li>
+        <li>Le bouton <strong>⏸ Pause</strong> arrête le temps. La grille est floutée, pour ne pas réfléchir gratuitement !</li>
+        <li>L’ordi n’a pas de chrono : il joue toujours assez vite.</li>
+      </ul>
+    </section>
+
+    <section class="card rules-card" id="inversee">
+      <h2>🧲 Gravité inversée</h2>
+      <p>Les pions ne tombent plus vers le bas. Tu choisis la direction : <strong>vers le haut, vers la gauche ou vers la droite</strong>.</p>
+      <ul>
+        <li>Vers le haut, tu choisis une colonne, et le pion part du bas.</li>
+        <li>Vers la gauche ou la droite, tu choisis une <strong>ligne</strong>, et le pion arrive par le côté.</li>
+      </ul>
+      <div class="demo-row" data-demos='[{"b":"X.O..../X.X..../O....../......./......./.......","t":"Gravité vers le haut"},{"b":"......./......./......./X....../OX...../XOX....","t":"Gravité vers la gauche"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="rotation">
+      <h2>🔄 Rotation</h2>
+      <p>Tous les 1 à 10 coups (tu choisis), <strong>la grille tourne d’un quart de tour</strong> dans le sens des aiguilles d’une montre, et tous les pions retombent.</p>
+      <ul>
+        <li>Une grille de 7×6 devient une grille de 6×7, et inversement.</li>
+        <li>Une ligne peut se former pendant la chute, pour n’importe quel joueur. Si les deux alignent, c’est celui qui vient de jouer qui l’emporte.</li>
+        <li>Pas de rotation en mode sans gravité : rien ne retomberait.</li>
+      </ul>
+    </section>
+
+    <section class="card rules-card" id="multi">
+      <h2>🎉 3 ou 4 joueurs</h2>
+      <p>On joue à 3 ou 4 sur la même grille, chacun son tour. Le premier qui aligne gagne.</p>
+      <ul>
+        <li>Si un joueur abandonne, les autres continuent. Ses pions restent sur la grille, mais ils ne comptent plus.</li>
+        <li>Contre l’ordi, tous les autres joueurs sont des ordis, chacun avec son niveau.</li>
+      </ul>
+    </section>
+
+    <section class="card rules-card" id="bombe">
+      <h2>💣 Bombe</h2>
+      <p>Chaque joueur a <strong>une seule bombe par partie</strong>.</p>
+      <ol>
+        <li>Clique sur 💣 (ou appuie sur <kbd>B</kbd>), puis sur un pion adverse.</li>
+        <li>Le pion explose, et tout ce qu’il y a au-dessus retombe.</li>
+        <li>Utiliser ta bombe prend ton tour : tu ne poses pas de pion ce tour-là.</li>
+      </ol>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./...X.../...O.../..XOX..","mark":["3,4"],"t":"La bombe vise ce pion mauve"},{"arrowNext":true},{"b":"......./......./......./......./...X.../..XOX..","t":"Il explose, le pion jaune retombe"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="inverse">
+      <h2>🙃 Inversé</h2>
+      <p><strong>But :</strong> tout est à l’envers. Celui qui aligne ses pions <strong>perd</strong>.</p>
+      <ul>
+        <li>À 2 joueurs, ton adversaire gagne dès que tu alignes.</li>
+        <li>À 3 ou 4, celui qui aligne est éliminé. Ses pions restent sur la grille, et le dernier en jeu gagne.</li>
+        <li>Si la grille est pleine sans que personne n’ait aligné, c’est une égalité.</li>
+      </ul>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./......./..OOO../.XXXX..","line":["1,5","4,5"],"bad":true,"t":"Le jaune a aligné 4 : il perd !"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="gravite">
+      <h2>🪨 Gravité</h2>
+      <p>Les pions sont lourds. <strong>Un pion avec 3 pions sur lui est écrasé et détruit</strong>, et ceux du dessus retombent.</p>
+      <ul>
+        <li>Une colonne ne garde donc jamais plus de 3 pions.</li>
+        <li>Le 4<sup>e</sup> pion compte quand même une fraction de seconde : 4 pions de la même couleur dans une colonne, ça gagne avant l’écrasement.</li>
+        <li><strong>Égalité :</strong> si la même position revient 3 fois, ou si la partie devient vraiment trop longue.</li>
+      </ul>
+      <div class="demo-row" data-demos='[{"b":"......./......./...X.../...O.../...X.../...O...","mark":["3,5"],"t":"3 pions au-dessus : celui du bas est écrasé"},{"arrowNext":true},{"b":"......./......./......./...X.../...O.../...X...","t":"Il reste 3 pions dans la colonne"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="brouillard">
+      <h2>🌫️ Brouillard</h2>
+      <p>Tu ne vois que <strong>les cases autour de tes propres pions</strong> (les 8 cases qui les touchent). Le reste est caché.</p>
+      <ul>
+        <li>Au début, tu ne vois rien du tout : à toi de faire le premier pas.</li>
+        <li>Entre amis, l’écran te demande de passer l’appareil à chaque tour, pour que chacun ne voie que ce qu’il doit voir.</li>
+        <li>L’ordi ne triche pas : il sait où il y a un pion, mais pas à qui il est, tant qu’il ne le voit pas.</li>
+        <li>Le brouillard se lève à la fin de la partie.</li>
+      </ul>
+      <div class="demo-row" data-demos='[{"b":"???????/???????/???????/??...??/??.X.??/??...??","t":"Ce que voit le jaune avec un seul pion"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="sans">
+      <h2>🪐 Sans gravité</h2>
+      <p>Plus rien ne tombe : tu poses ton pion <strong>sur la case que tu veux</strong>. Les autres règles restent les mêmes.</p>
+      <p class="info alt">⚠️ Sans gravité, attaquer est bien plus facile qu’en classique. Essaie 5 en ligne sur une grande grille, c’est bien plus équilibré !</p>
+    </section>
+
+    <section class="card rules-card" id="tournoi">
+      <h2>🏆 Tournoi</h2>
+      <ul>
+        <li>De 2 à 16 participants, humains ou ordis du niveau de ton choix.</li>
+        <li>Élimination directe, avec un tirage au sort. Si le nombre de participants ne tombe pas juste, certains passent directement au tour suivant.</li>
+        <li>En cas d’égalité, on rejoue le match.</li>
+        <li>Les matchs entre ordis peuvent être simulés d’un coup, ou joués pour de vrai pour les regarder.</li>
+        <li>Le tableau montre en direct qui avance, et il est gardé si tu fermes la page.</li>
+      </ul>
+    </section>
+
+    <section class="card rules-card" id="commun">
+      <h2>⚙️ Pour tous les modes</h2>
+
+      <p class="info">🧩 <strong>Les modes se combinent :</strong> un brouillard éclair avec bombe à 4 joueurs ? Pas de problème.</p>
+
+      <h3>Qui commence ?</h3>
+      <p>Tu choisis : un joueur précis, chacun son tour, au hasard, le gagnant de la partie d’avant ou le perdant. S’il n’y a ni gagnant ni perdant, c’est au hasard.</p>
+
+      <h3>Les niveaux de l’ordi</h3>
+      <ul class="level-list" id="levelList"></ul>
+
+      <h3>Les pions</h3>
+      <ul>
+        <li><strong>Couleur :</strong> 7 couleurs prêtes, un code, un nom ou la palette.</li>
+        <li><strong>Style :</strong> classique, avec un X, ou brillant.</li>
+        <li><strong>En or 🥇 :</strong> réservés à ceux qui ont gagné <strong>10 parties d’affilée</strong>. Une défaite ou une égalité remet la série à zéro, mais les pions en or restent acquis.</li>
+      </ul>
+
+      <h3>Annuler, indice et abandon</h3>
+      <ul>
+        <li><strong>Annuler :</strong> contre l’ordi, il faut l’activer avant de jouer, et ça retire son coup et le tien. Entre amis, c’est toujours possible.</li>
+        <li><strong>Indice :</strong> il montre le meilleur coup, mais il faut cocher l’option avant la partie.</li>
+        <li><strong>Abandonner :</strong> le drapeau 🏳️ à côté de chaque joueur humain. Ça compte comme une défaite.</li>
+        <li><strong>Analyser la partie :</strong> à la fin, chaque coup est noté, et le meilleur coup est montré sur la grille.</li>
+      </ul>
+
+      <h3>Souris, doigt et clavier</h3>
+      <div class="key-table">
+        <span><kbd>1</kbd> … <kbd>9</kbd> <kbd>0</kbd></span><span>Jouer dans la colonne (ou la ligne) de ce numéro. Le <kbd>0</kbd> est la 10<sup>e</sup>.</span>
+        <span><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></span><span>Choisir une colonne, une ligne ou une case.</span>
+        <span><kbd>Espace</kbd></span><span>Lancer le pion. À la fin de la partie, ça relance une partie.</span>
+        <span><kbd>Z</kbd></span><span>Annuler le dernier coup, si c’est permis.</span>
+        <span><kbd>H</kbd></span><span>Demander un indice, si c’est permis.</span>
+        <span><kbd>B</kbd></span><span>Prendre ou reposer ta bombe.</span>
+        <span><kbd>P</kbd></span><span>Pause (mode éclair, ordi contre ordi).</span>
+        <span><kbd>F</kbd></span><span>Plein écran.</span>
+        <span><kbd>R</kbd></span><span>Nouvelle partie.</span>
+      </div>
+
+      <div class="actions rules-back"><a class="btn btn-primary" href="index.html">🎮 Jouer</a></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><span id="year"></span> Turbonix Entertainment. Tous droits réservés.</p>
+  </footer>
+
+  <script src="js/engine.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/pages.js"></script>
+</body>
+</html>

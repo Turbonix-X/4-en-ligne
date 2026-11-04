@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Intérieur gris foncé, un peu plus clair en haut -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3740"/>
+      <stop offset="1" stop-color="#1c1a21"/>
+    </linearGradient>
+    <!-- Contour mauve -->
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c4a8ff"/>
+      <stop offset="0.5" stop-color="#9b6dff"/>
+      <stop offset="1" stop-color="#6f45d9"/>
+    </linearGradient>
+    <!-- Jaune brillant du X -->
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6a8"/>
+      <stop offset="0.45" stop-color="#ffd60a"/>
+      <stop offset="1" stop-color="#d99a00"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect x="3" y="3" width="58" height="58" rx="15" fill="url(#bg)" stroke="url(#rim)" stroke-width="4"/>
+  <!-- Reflet léger sur le haut du fond -->
+  <path d="M8 18 Q8 7 19 7 H45 Q56 7 56 18 Q32 26 8 18 Z" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Le X : deux barres biseautées qui se croisent -->
+  <g filter="url(#glow)">
+    <path d="M14 15 H24 L50 49 H40 Z" fill="url(#gold)"/>
+    <path d="M40 15 H50 L24 49 H14 Z" fill="url(#gold)" stroke="#1c1a21" stroke-width="1.6" paint-order="stroke"/>
+  </g>
+  <!-- Reflets brillants -->
+  <path d="M15.5 16 H23 L27 21.2 H20 Z" fill="url(#shine)"/>
+  <path d="M41.5 16 H49 L45 21.2 H37.6 Z" fill="url(#shine)"/>
+  <!-- Petite étincelle -->
+  <path d="M50 9 L51 12 L54 13 L51 14 L50 17 L49 14 L46 13 L49 12 Z" fill="#ffffff" opacity="0.9"/>
+</svg>

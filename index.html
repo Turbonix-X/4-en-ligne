@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4 en ligne — Turbonix</title>
+  <meta name="description" content="Le 4 en ligne en 2D ou en 3D : bot à 10 niveaux, tournoi jusqu'à 16 joueurs, puzzles, analyse de partie et plein de modes.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script>
+    // Applique le thème avant l'affichage pour éviter un flash
+    (function () {
+      var prefs = {};
+      try { prefs = JSON.parse(localStorage.getItem("tx-prefs")) || {}; } catch (e) {}
+      var theme = prefs.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="turbonix.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="site-title">4 <span>en</span> ligne</h1>
+      <div class="header-right">
+        <a href="regles.html" class="hbtn hide-phone" title="Règles du jeu" aria-label="Règles du jeu">
+          <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 0 2 0h14v-2"/><path d="M9 8h7M9 12h5"/></svg>
+        </a>
+        <a href="astuces.html" class="hbtn hide-phone" title="Astuces" aria-label="Astuces">
+          <svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg>
+        </a>
+        <button id="soundBtn" class="hbtn" aria-pressed="true" title="Sons activés" aria-label="Activer ou couper les sons">
+          <svg class="on" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+          <svg class="off" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>
+        </button>
+        <button id="vibBtn" class="hbtn" aria-pressed="true" title="Vibrations activées" aria-label="Activer ou couper les vibrations">
+          <svg class="on" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 8v8"/><path d="M21 8v8"/></svg>
+          <svg class="off" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 3l18 18"/></svg>
+        </button>
+        <button id="shareBtn" class="hbtn" title="Partager / sauvegarder" aria-label="Partager la configuration">
+          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>
+        </button>
+        <button id="clearBtn" class="hbtn danger" title="Effacer toutes les données du jeu" aria-label="Effacer toutes les données du jeu">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>
+        </button>
+        <button id="themeBtn" class="theme-toggle" aria-label="Changer de thème" title="Mode sombre / clair">
+          <span class="theme-icon sun">☀️</span>
+          <span class="theme-icon moon">🌙</span>
+        </button>
+        <a href="#" class="logo" aria-label="Turbonix Entertainment">
+          <img src="logo.svg" alt="Logo Turbonix" width="44" height="44">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ===== La partie ===== -->
+    <section class="card full" id="playCard">
+      <div class="play-top">
+        <div id="playTabs" class="tabs mode-tabs" role="group" aria-label="Façon de jouer">
+          <button class="tab" data-play="bot"><span class="badge">🤖</span>Contre l’ordi</button>
+          <button class="tab" data-play="friends"><span class="badge">👥</span>Entre amis</button>
+          <button class="tab" data-play="watch"><span class="badge">📺</span>Ordi contre ordi</button>
+          <button class="tab" data-play="tournament"><span class="badge">🏆</span>Tournoi</button>
+          <button class="tab" data-play="training"><span class="badge">🧩</span>Entraînement</button>
+        </div>
+        <div class="top-links">
+          <a class="btn btn-small rules-link" href="regles.html">📖 Règles</a>
+          <a class="btn btn-small rules-link" href="astuces.html">💡 Astuces</a>
+        </div>
+      </div>
+      <p id="modeDesc" class="muted small mode-desc"></p>
+
+      <!-- À qui le tour -->
+      <div id="turnBar" class="turnbar" data-n="2"></div>
+      <div id="clock" class="clock hidden" aria-hidden="true"><div id="clockFill" class="clock-fill"></div><span id="clockText" class="clock-text"></span></div>
+
+      <div id="arena" class="stage-zone arena">
+        <div id="boardHost" class="board-host"></div>
+        <div class="arena-tools">
+          <button id="pauseBtn" class="tool hidden" title="Pause (P)" aria-label="Pause">⏸</button>
+          <button id="viewToggle" class="tool" title="Passer en 2D ou en 3D" aria-label="Passer en 2D ou en 3D">3D</button>
+          <button id="fullBtn" class="tool" title="Plein écran (F)" aria-label="Plein écran">
+            <svg viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>
+          </button>
+        </div>
+        <div id="pauseOverlay" class="overlay hidden">
+          <div class="overlay-box"><div class="overlay-icon">⏸</div><p>Pause</p><button id="resumeBtn" class="btn btn-small">Reprendre</button></div>
+        </div>
+        <div id="passOverlay" class="overlay solid hidden">
+          <div class="overlay-box"><div class="overlay-icon">🌫️</div><p id="passText"></p><button id="passBtn" class="btn btn-small">Je suis prêt</button></div>
+        </div>
+        <div id="vsOverlay" class="overlay vs hidden"></div>
+      </div>
+
+      <p id="status" class="result status" aria-live="polite"></p>
+      <p id="moveInfo" class="muted small move-info"></p>
+
+      <!-- Analyse de la partie -->
+      <div id="analysis" class="replay hidden">
+        <div id="anProgress" class="an-progress hidden"><div class="bar"><div id="anFill" class="bar-fill" style="width:0"></div></div><span id="anText" class="small muted"></span></div>
+        <div id="anBody" class="hidden">
+          <div id="anKpis" class="kpis"></div>
+          <div class="replay-controls">
+            <button id="rpFirst" class="btn btn-small" title="Début" aria-label="Revenir au début">⏮</button>
+            <button id="rpPrev" class="btn btn-small" title="Coup précédent (←)" aria-label="Coup précédent">◀</button>
+            <button id="rpNext" class="btn btn-small" title="Coup suivant (→)" aria-label="Coup suivant">▶</button>
+            <button id="rpLast" class="btn btn-small" title="Fin" aria-label="Aller à la fin">⏭</button>
+            <span id="rpCount" class="rp-count"></span>
+            <button id="rpExit" class="btn btn-small rp-exit">✕ Quitter</button>
+          </div>
+          <div class="advantage" title="Qui est le mieux placé dans cette position"><div id="advFill" class="advantage-fill"></div></div>
+          <p id="anNote" class="an-note"></p>
+          <div id="rpMoves" class="history rp-moves"></div>
+        </div>
+      </div>
+
+      <div class="actions play-actions">
+        <button id="newBtn" class="btn btn-primary">Nouvelle partie</button>
+        <button id="undoBtn" class="btn btn-ghost hidden">↩️ Annuler</button>
+        <button id="hintBtn" class="btn btn-ghost hidden">💡 Indice</button>
+        <button id="bombBtn" class="btn btn-ghost hidden">💣 Bombe</button>
+        <button id="analyzeBtn" class="btn btn-ghost hidden">🔍 Analyser la partie</button>
+      </div>
+      <p id="hint" class="hint"></p>
+    </section>
+
+    <!-- ===== Tournoi ===== -->
+    <section class="card full hidden" id="tournamentCard">
+      <div class="card-head">
+        <h2>Tournoi</h2>
+        <button id="tResetBtn" class="btn btn-small hidden">🗑 Annuler le tournoi</button>
+      </div>
+      <div id="tSetup">
+        <div class="setting">
+          <div class="look-label">Nombre de participants : <strong id="tCountLabel">8</strong></div>
+          <input id="tCount" class="range" type="range" min="2" max="16" step="1" value="8" aria-label="Nombre de participants">
+        </div>
+        <div class="setting">
+          <div class="t-tools">
+            <button id="tBots" class="btn btn-small">🤖 Tout en ordis</button>
+            <button id="tRandomLv" class="btn btn-small">🎲 Niveaux au hasard</button>
+            <label class="switch"><input id="tSim" type="checkbox" checked><span class="switch-track"><span class="switch-thumb"></span></span>Simuler les matchs entre ordis</label>
+          </div>
+          <div id="tEntries" class="t-entries"></div>
+        </div>
+        <p class="muted small">Les matchs se jouent avec la grille et les modes choisis plus bas (à 2 joueurs). Le tirage est fait au hasard. En cas d’égalité, on rejoue le match.</p>
+      </div>
+      <div id="tBracketWrap" class="hidden">
+        <div id="tBracket" class="bracket"></div>
+      </div>
+    </section>
+
+    <!-- ===== Entraînement ===== -->
+    <section class="card full hidden" id="trainingCard">
+      <div class="card-head">
+        <h2>Puzzles</h2>
+        <div class="presets"><span id="pzScore" class="chip static"></span></div>
+      </div>
+      <div id="pzList" class="pz-list"></div>
+    </section>
+
+    <!-- ===== Grille et affichage ===== -->
+    <section class="card" id="gridCard">
+      <div class="card-head">
+        <h2>Grille</h2>
+        <button id="classicBtn" class="btn btn-small">🎯 Revenir au classique</button>
+      </div>
+      <p id="pendingNote" class="info alt hidden">⏳ Partie en cours : ces réglages s’appliqueront à la prochaine partie.</p>
+      <div class="setting">
+        <div class="look-label">Taille de la grille</div>
+        <div id="sizeChips" class="presets" role="group" aria-label="Taille de la grille"></div>
+      </div>
+      <div class="setting">
+        <div class="look-label">Pions à aligner pour gagner</div>
+        <div id="winChips" class="presets" role="group" aria-label="Pions à aligner"></div>
+      </div>
+      <div class="setting">
+        <div class="look-label">Affichage</div>
+        <div id="viewSwitch" class="pill-switch wide" data-active="0" role="group" aria-label="Affichage">
+          <span class="pill-indicator"></span>
+          <button data-view="2d" class="active">▦ En 2D</button>
+          <button data-view="3d">🧊 En 3D</button>
+        </div>
+        <p id="view3dNote" class="muted small"></p>
+      </div>
+      <div class="setting">
+        <div class="look-label">Vitesse des animations</div>
+        <div id="speedChips" class="presets" role="group" aria-label="Vitesse des animations">
+          <button class="chip" data-speed="0.5">🐢 Lente</button>
+          <button class="chip" data-speed="1">Normale</button>
+          <button class="chip" data-speed="1.8">🐇 Rapide</button>
+          <button class="chip" data-speed="3.5">⚡ Très rapide</button>
+          <button class="chip" data-speed="0">Aucune</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Options de partie ===== -->
+    <section class="card" id="optionsCard">
+      <div class="card-head"><h2>Avant de jouer</h2></div>
+      <div class="setting">
+        <div class="look-label">Qui commence ?</div>
+        <div id="starterChips" class="presets" role="group" aria-label="Qui commence"></div>
+        <p id="starterNote" class="muted small"></p>
+      </div>
+      <div class="setting">
+        <label class="switch"><input id="undoOpt" type="checkbox"><span class="switch-track"><span class="switch-thumb"></span></span>↩️ Autoriser « Annuler » contre l’ordi</label>
+        <p class="muted small">À activer <strong>avant</strong> la partie : une fois lancée, ça ne change plus. Entre amis, on peut toujours annuler.</p>
+      </div>
+      <div class="setting">
+        <label class="switch"><input id="hintOpt" type="checkbox"><span class="switch-track"><span class="switch-thumb"></span></span>💡 Autoriser les indices</label>
+        <p class="muted small">À cocher <strong>avant</strong> la partie, et valable pour toute la partie. L’indice montre la meilleure colonne.</p>
+      </div>
+    </section>
+
+    <!-- ===== Joueurs ===== -->
+    <section class="card full" id="playersCard">
+      <div class="card-head"><h2>Joueurs et pions</h2></div>
+      <div id="players" class="players"></div>
+      <p id="sameColor" class="warn hidden"></p>
+    </section>
+
+    <!-- ===== Modes ===== -->
+    <section class="card full" id="modesCard">
+      <div class="card-head">
+        <h2>Modes de jeu</h2>
+        <span class="muted small">Ils se combinent comme tu veux.</span>
+      </div>
+      <div id="modeGrid" class="mode-grid"></div>
+    </section>
+
+    <!-- ===== Statistiques ===== -->
+    <section class="card full" id="statsCard">
+      <div class="card-head">
+        <h2>Statistiques</h2>
+        <button id="clearPlayerBtn" class="btn btn-small hidden">🗑 Effacer ce joueur</button>
+      </div>
+      <div id="statProfiles" class="presets stat-profiles" role="group" aria-label="Choisir un joueur"></div>
+      <div id="statEmpty" class="muted small stat-empty">Joue une partie pour voir tes statistiques ici.</div>
+      <div id="statBody" class="hidden">
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-value" id="stGames">0</span><span class="kpi-label">Parties</span></div>
+          <div class="kpi"><span class="kpi-value" id="stWins">0</span><span class="kpi-label">Victoires</span></div>
+          <div class="kpi"><span class="kpi-value" id="stLosses">0</span><span class="kpi-label">Défaites</span></div>
+          <div class="kpi"><span class="kpi-value" id="stDraws">0</span><span class="kpi-label">Égalités</span></div>
+          <div class="kpi"><span class="kpi-value" id="stStreak">0</span><span class="kpi-label">Série en cours</span></div>
+          <div class="kpi"><span class="kpi-value" id="stBest">0</span><span class="kpi-label">Meilleure série</span></div>
+          <div class="kpi"><span class="kpi-value" id="stTrophies">0</span><span class="kpi-label">Tournois gagnés</span></div>
+          <div class="kpi"><span class="kpi-value" id="stGold">🔒</span><span class="kpi-label">Pions en or</span></div>
+        </div>
+        <div class="stat-cols">
+          <div>
+            <h3>Colonne jouée en premier <small id="stFirstTop" class="muted"></small></h3>
+            <div id="stFirst" class="bars"></div>
+          </div>
+          <div>
+            <h3>Colonne la plus jouée <small id="stAllTop" class="muted"></small></h3>
+            <div id="stAll" class="bars"></div>
+          </div>
+        </div>
+        <h3>Contre chaque niveau de l’ordi</h3>
+        <p class="muted small level-hint">Clique sur un niveau pour voir quand tu as gagné et perdu contre lui.</p>
+        <div class="compare-table level-table">
+          <table>
+            <thead><tr><th>Niveau</th><th>Parties</th><th>V</th><th>É</th><th>D</th><th title="Meilleure série de victoires">Série</th><th>Dernière victoire</th></tr></thead>
+            <tbody id="levelRows"></tbody>
+          </table>
+        </div>
+        <details class="help">
+          <summary>Comment ça marche ?</summary>
+          <ul>
+            <li>Les statistiques sont rangées par nom de joueur : change de nom pour avoir d’autres statistiques.</li>
+            <li>Une partie compte dès qu’elle est finie. Un abandon compte comme une défaite. Une partie relancée avant la fin ne compte pas.</li>
+            <li>La <strong>série</strong> compte tes victoires d’affilée : une défaite ou une égalité la remet à zéro. À 10, tu débloques les pions en or pour toujours.</li>
+            <li>Les colonnes ne comptent pas quand la gravité va à gauche ou à droite, puisqu’on y choisit des lignes.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><span id="year"></span> Turbonix Entertainment. Tous droits réservés.</p>
+  </footer>
+
+  <!-- Partage & fichier -->
+  <dialog id="shareDialog" class="dialog">
+    <form method="dialog" class="dialog-close"><button aria-label="Fermer">✕</button></form>
+    <h2>Partager &amp; sauvegarder</h2>
+    <h3>🔗 Lien de tes réglages</h3>
+    <p class="muted small">Envoie ce lien à tes amis : en l’ouvrant, ils retrouvent ta grille, tes modes et tes couleurs.</p>
+    <div class="field-row">
+      <input id="shareLink" class="input grow" type="text" readonly aria-label="Lien de partage">
+      <button id="copyLinkBtn" class="btn btn-small">Copier</button>
+    </div>
+    <h3>💾 Fichier de sauvegarde</h3>
+    <p class="muted small">Tout est déjà sauvegardé automatiquement sur cet appareil. Tu peux aussi garder tes statistiques dans un fichier.</p>
+    <div class="field-row wrap">
+      <button id="exportBtn" class="btn btn-small">Télécharger le fichier (.json)</button>
+      <label class="btn btn-small file-btn">Ouvrir un fichier…
+        <input id="importInput" type="file" accept=".json,application/json" hidden>
+      </label>
+    </div>
+    <p id="importError" class="error hidden"></p>
+  </dialog>
+
+  <!-- Historique contre un niveau -->
+  <dialog id="historyDialog" class="dialog">
+    <form method="dialog" class="dialog-close"><button aria-label="Fermer">✕</button></form>
+    <h2 id="historyTitle"></h2>
+    <div class="kpis hist-kpis">
+      <div class="kpi"><span class="kpi-value" id="histWins">0</span><span class="kpi-label">Gagnées</span></div>
+      <div class="kpi"><span class="kpi-value" id="histLosses">0</span><span class="kpi-label">Perdues</span></div>
+      <div class="kpi"><span class="kpi-value" id="histDraws">0</span><span class="kpi-label">Égalités</span></div>
+      <div class="kpi"><span class="kpi-value" id="histBest">0</span><span class="kpi-label">Meilleure série</span></div>
+    </div>
+    <ol id="historyList" class="hist-list"></ol>
+    <p id="historyEmpty" class="muted small hist-empty hidden">Aucune partie contre ce niveau pour l’instant.</p>
+  </dialog>
+
+  <!-- Confirmation -->
+  <dialog id="confirmDialog" class="dialog small">
+    <h2 id="confirmTitle"></h2>
+    <p id="confirmText"></p>
+    <form method="dialog" class="dialog-actions">
+      <button value="cancel" class="btn btn-small">Annuler</button>
+      <button id="confirmOk" value="ok" class="btn btn-small btn-danger"></button>
+    </form>
+  </dialog>
+
+  <!-- Champion du tournoi -->
+  <dialog id="championDialog" class="dialog champion">
+    <div class="trophy" aria-hidden="true">🏆</div>
+    <h2 id="championName"></h2>
+    <p id="championText" class="muted"></p>
+    <div id="championPodium" class="podium"></div>
+    <form method="dialog" class="dialog-actions center"><button class="btn btn-small">Voir le tableau</button></form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/sound.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/fx.js"></script>
+  <script src="js/board2d.js"></script>
+  <script src="js/board3d.js"></script>
+  <script src="js/puzzles.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/tournament.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

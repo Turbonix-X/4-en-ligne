@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astuces du 4 en ligne — Turbonix</title>
+  <meta name="description" content="Les meilleures astuces pour gagner au 4 en ligne : le centre, la double menace, la parité et des conseils pour chaque mode.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script>
+    // Applique le thème avant l'affichage pour éviter un flash
+    (function () {
+      var prefs = {};
+      try { prefs = JSON.parse(localStorage.getItem("tx-prefs")) || {}; } catch (e) {}
+      var theme = prefs.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="turbonix.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="rules-page">
+  <div class="bg-blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="site-title">4 <span>en</span> ligne</h1>
+      <div class="header-right">
+        <a href="index.html" class="hbtn" title="Retour au jeu" aria-label="Retour au jeu">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </a>
+        <button id="themeBtn" class="theme-toggle" aria-label="Changer de thème" title="Mode sombre / clair">
+          <span class="theme-icon sun">☀️</span>
+          <span class="theme-icon moon">🌙</span>
+        </button>
+        <a href="index.html" class="logo" aria-label="Turbonix Entertainment">
+          <img src="logo.svg" alt="Logo Turbonix" width="44" height="44">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="card rules-nav" aria-label="Sommaire des astuces">
+      <div class="presets">
+        <a class="chip" href="#base">🌱 Les bases</a>
+        <a class="chip" href="#attaque">⚔️ Attaquer</a>
+        <a class="chip" href="#pro">🧠 Comme un pro</a>
+        <a class="chip" href="#modes">🎛️ Mode par mode</a>
+        <a class="chip" href="#progresser">📈 Progresser</a>
+      </div>
+    </nav>
+
+    <section class="card rules-card" id="base">
+      <h2>🌱 Les bases</h2>
+      <h3>1. Joue au centre</h3>
+      <p>La colonne du milieu fait partie du plus grand nombre de lignes possibles. Sur la grille classique, c’est le meilleur premier coup, et de loin. Tes statistiques te disent quelle colonne tu joues le plus : vérifie que c’est bien celle-là !</p>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./......./......./...X...","arrow":3,"t":"Le meilleur premier coup"}]'></div>
+      <h3>2. Avant chaque coup, deux questions</h3>
+      <ol>
+        <li>Est-ce que je peux gagner tout de suite ?</li>
+        <li>Est-ce que mon adversaire peut gagner à son prochain coup ? Si oui, bloque-le.</li>
+      </ol>
+      <h3>3. Regarde au-dessus de ton pion</h3>
+      <p>Ton coup libère la case juste au-dessus. Si c’est la case que ton adversaire attend pour gagner, tu viens de lui offrir la partie.</p>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./......./..OOO../X.XOX..","mark":["5,4"],"arrow":5,"t":"Si le jaune joue colonne 6, le mauve gagne juste au-dessus"}]'></div>
+    </section>
+
+    <section class="card rules-card" id="attaque">
+      <h2>⚔️ Attaquer</h2>
+      <h3>La double menace</h3>
+      <p>C’est <strong>le</strong> coup qui gagne les parties : crée deux façons de gagner en même temps. Ton adversaire n’en bloquera qu’une.</p>
+      <div class="demo-row" data-demos='[{"b":"......./......./......./......./......./.OXXX.O","t":"3 alignés, bouchés d’un côté : une seule menace"},{"b":"......./......./......./......./..OO.../..XXX..","mark":["1,5","5,5"],"t":"3 alignés, ouverts des deux côtés : c’est gagné !"}]'></div>
+      <h3>Trois alignés avec un trou</h3>
+      <p>« X X _ X » est aussi fort que « X X X _ », et il se voit bien moins. Ton adversaire peut passer à côté.</p>
+      <h3>Empile tes menaces</h3>
+      <p>Deux menaces l’une au-dessus de l’autre dans la même colonne, c’est imparable : quand ton adversaire bloque la première, il te donne la seconde.</p>
+    </section>
+
+    <section class="card rules-card" id="pro">
+      <h2>🧠 Comme un pro</h2>
+      <h3>La parité : le secret des grands joueurs</h3>
+      <p>Numérote les lignes de 1 (en bas) à 6 (en haut). Quand la grille se remplit, les colonnes finissent par forcer les joueurs à jouer dans un certain ordre, et ça donne une règle simple :</p>
+      <ul>
+        <li>Celui qui a <strong>commencé</strong> veut des menaces sur des lignes <strong>impaires</strong> (1, 3, 5).</li>
+        <li>Celui qui joue <strong>en second</strong> veut des menaces sur des lignes <strong>paires</strong> (2, 4, 6).</li>
+      </ul>
+      <p>Une bonne menace de longue durée n’a même pas besoin d’être jouée : à la fin, ton adversaire sera obligé de te donner la case.</p>
+      <h3>Ne te précipite pas</h3>
+      <p>Aligner 3 pions trop tôt force ton adversaire à bloquer… et l’aide à bien placer ses pions. Garde tes menaces pour le bon moment.</p>
+      <h3>Réponds au-dessus</h3>
+      <p>Si tu joues en second et que tu n’as rien de mieux, jouer juste au-dessus du dernier pion adverse protège souvent tes lignes paires.</p>
+    </section>
+
+    <section class="card rules-card" id="modes">
+      <h2>🎛️ Mode par mode</h2>
+      <ul>
+        <li><strong>♻️ Limité :</strong> regarde quel pion va partir (il clignote). Une ligne qui s’appuie sur lui va disparaître, mais la chute peut aussi en créer une nouvelle.</li>
+        <li><strong>⚡ Éclair :</strong> place-toi avec les touches <kbd>1</kbd> à <kbd>0</kbd>, c’est plus rapide que la souris. Et réfléchis pendant le tour de l’adversaire !</li>
+        <li><strong>🧲 Gravité inversée :</strong> la grille se joue pareil, tournée. Le centre reste le centre : sur les côtés, c’est la ligne du milieu.</li>
+        <li><strong>🔄 Rotation :</strong> avant de jouer, imagine la grille après sa rotation. Une ligne horizontale devient verticale, et elle ne tombe pas de la même façon.</li>
+        <li><strong>🎉 3-4 joueurs :</strong> tout le monde surveille celui qui mène. Reste discret le plus longtemps possible, et bloque quand c’est utile.</li>
+        <li><strong>💣 Bombe :</strong> garde-la pour le moment décisif : casser une ligne de 3, ou faire retomber une colonne entière pour créer ta propre ligne.</li>
+        <li><strong>🙃 Inversé :</strong> joue sur les bords, évite les groupes, et compte les cases sûres qui restent. Le but est de forcer l’autre à aligner quand il n’a plus le choix.</li>
+        <li><strong>🪨 Gravité :</strong> seules les 3 premières lignes comptent vraiment. Fais écraser un pion adverse important en ajoutant des pions au-dessus.</li>
+        <li><strong>🌫️ Brouillard :</strong> étale tes pions au début pour voir plus de cases, et utilise les refus de coup : une colonne pleine te donne des informations.</li>
+        <li><strong>🪐 Sans gravité :</strong> celui qui commence a un énorme avantage. Prends le centre, et crée vite des doubles menaces.</li>
+      </ul>
+    </section>
+
+    <section class="card rules-card" id="progresser">
+      <h2>📈 Progresser</h2>
+      <ol>
+        <li><strong>Fais les puzzles :</strong> dans l’onglet 🧩 Entraînement, commence par « Gagne en 2 coups », puis monte petit à petit.</li>
+        <li><strong>Analyse tes parties :</strong> à la fin, clique sur 🔍 Analyser la partie pour voir où tu as raté une victoire.</li>
+        <li><strong>Monte de niveau petit à petit :</strong> quand tu gagnes souvent contre un niveau, passe au suivant.</li>
+        <li><strong>Vise 10 victoires d’affilée :</strong> les pions en or t’attendent 🥇</li>
+      </ol>
+      <div class="actions rules-back"><a class="btn btn-primary" href="index.html">🎮 Jouer</a></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><span id="year"></span> Turbonix Entertainment. Tous droits réservés.</p>
+  </footer>
+
+  <script src="js/pages.js"></script>
+</body>
+</html>
