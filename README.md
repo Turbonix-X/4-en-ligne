@@ -1,5 +1,7 @@
 # 4 en ligne
 
+**A NOTER:** Ce site est fait à 100% par Intelligence Artifficielle (ou Super Intelligence pour les intimes).
+
 Le 4 en ligne en 2D ou en vraie 3D, avec un bot à 10 niveaux, un tournoi jusqu'à 16 joueurs, des puzzles, l'analyse de partie et plein de modes qui se combinent.
 
 **Jouer en ligne : https://turbonix-x.github.io/4-en-ligne/**
