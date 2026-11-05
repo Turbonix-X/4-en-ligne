@@ -156,20 +156,22 @@
 
     <section class="card rules-card" id="gravite">
       <h2>🪨 Gravité</h2>
-      <p>Les pions sont lourds. <strong>Un pion avec 3 pions sur lui est écrasé et détruit</strong>, et ceux du dessus retombent.</p>
+      <p>Les pions adverses sont lourds. <strong>Si les 3 pions juste au-dessus d’un de tes pions sont tous adverses, ils l’écrasent</strong> : il est détruit, et ceux du dessus retombent.</p>
       <ul>
-        <li>Une colonne ne garde donc jamais plus de 3 pions.</li>
-        <li>Le 4<sup>e</sup> pion compte quand même une fraction de seconde : 4 pions de la même couleur dans une colonne, ça gagne avant l’écrasement.</li>
-        <li><strong>Égalité :</strong> si la même position revient 3 fois, ou si la partie devient vraiment trop longue.</li>
+        <li>Tes propres pions ne t’écrasent jamais : un seul de tes pions dans les 3 du dessus suffit à te protéger.</li>
+        <li>Si ton coup aligne tes pions, tu gagnes tout de suite, avant tout écrasement.</li>
+        <li>Quand des pions retombent, ça peut créer une ligne, même pour ton adversaire. Si les deux alignent, c’est celui qui vient de jouer qui l’emporte.</li>
+        <li><strong>Égalité :</strong> si la grille est pleine, si la même position revient 3 fois, ou si la partie devient vraiment trop longue.</li>
       </ul>
-      <div class="demo-row" data-demos='[{"b":"......./......./...X.../...O.../...X.../...O...","mark":["3,5"],"t":"3 pions au-dessus : celui du bas est écrasé"},{"arrowNext":true},{"b":"......./......./......./...X.../...O.../...X...","t":"Il reste 3 pions dans la colonne"}]'></div>
+      <div class="demo-row" data-demos='[{"b":"......./......./...O.../...O.../...O.../...X...","mark":["3,5"],"t":"3 pions adverses dessus : le jaune est écrasé"},{"arrowNext":true},{"b":"......./......./......./...O.../...O.../...O...","t":"Il disparaît, les mauves retombent"},{"b":"......./......./...O.../...X.../...O.../...X...","t":"Un pion jaune protège celui du bas : rien ne se passe"}]'></div>
     </section>
 
     <section class="card rules-card" id="brouillard">
       <h2>🌫️ Brouillard</h2>
-      <p>Tu ne vois que <strong>les cases autour de tes propres pions</strong> (les 8 cases qui les touchent). Le reste est caché.</p>
+      <p><strong>Un grand nuage couvre toute la grille.</strong> Chaque pion que tu poses le dissipe autour de lui : tu vois sa case et les 8 cases qui la touchent. Le reste est caché.</p>
       <ul>
         <li>Au début, tu ne vois rien du tout : à toi de faire le premier pas.</li>
+        <li>Si un de tes pions disparaît (bombe, mode limité…), le nuage revient là où plus rien ne l’écarte.</li>
         <li>Entre amis, l’écran te demande de passer l’appareil à chaque tour, pour que chacun ne voie que ce qu’il doit voir.</li>
         <li>L’ordi ne triche pas : il sait où il y a un pion, mais pas à qui il est, tant qu’il ne le voit pas.</li>
         <li>Le brouillard se lève à la fin de la partie.</li>

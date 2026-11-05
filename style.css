@@ -115,8 +115,6 @@ a.hbtn { text-decoration: none; }
   transform: translateX(calc(100% * var(--active, 0)));
   transition: transform 0.55s var(--spring), opacity 0.35s;
 }
-.turnbar:not(.over) .turn-glider { animation: c4-turn 1.6s ease-in-out infinite; }
-.turnbar.thinking .turn-glider { animation-duration: 0.8s; }
 .turnbar.draw .turn-glider { opacity: 0; }
 .turn-side {
   position: relative;
@@ -133,6 +131,8 @@ a.hbtn { text-decoration: none; }
 .turn-side.active { color: var(--ink); transform: scale(1.03); }
 .turn-side.out { opacity: 0.4; text-decoration: line-through; }
 .turn-side .tok.mini { width: 30px; height: 30px; transition: transform 0.5s var(--spring); }
+/* Rien ne clignote dans cette barre, même avec des pions brillants ou en or : on doit pouvoir la regarder longtemps */
+.turn-side .tok, .turn-side .tok::after { animation: none; }
 .turn-side.active .tok.mini { transform: rotate(-8deg) scale(1.1); }
 .turn-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
 .turn-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -258,14 +258,7 @@ a.hbtn { text-decoration: none; }
 .b2d-board > * { position: absolute; }
 .b2d-tokens { inset: 0; }
 .b2d-plate { pointer-events: none; z-index: 2; }
-.b2d-fog { inset: 0; z-index: 3; pointer-events: none; }
-.b2d-fog i {
-  position: absolute;
-  border-radius: 24%;
-  background: radial-gradient(circle at 40% 35%, #6c5d9c, #3a2f5e 60%, #231b3d);
-  box-shadow: 0 0 calc(var(--cell) * 0.2) calc(var(--cell) * 0.06) #2f2650;
-  animation: c4-fog 9s ease-in-out infinite;
-}
+.b2d-fog { z-index: 3; pointer-events: none; }
 .b2d-lane {
   z-index: 1;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
@@ -649,14 +642,12 @@ a.hbtn { text-decoration: none; }
 
 /* ---------- Animations ---------- */
 
-@keyframes c4-turn { 50% { box-shadow: 0 6px 34px rgba(255, 214, 10, 0.8), 0 0 0 3px rgba(155, 109, 255, 0.28); } }
 @keyframes c4-dot { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-4px); opacity: 1; } }
 @keyframes c4-fade { from { opacity: 0; } }
 @keyframes c4-low { 50% { box-shadow: 0 0 16px rgba(232, 51, 111, 0.8); } }
 @keyframes c4-glow { 50% { filter: brightness(1.25) saturate(1.2); } }
 @keyframes c4-goldglow { 50% { filter: brightness(1.2); box-shadow: 0 0 calc(var(--cell, 30px) * 0.5) rgba(255, 214, 10, 0.95), inset 0 -3px 6px rgba(90, 50, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.85); } }
 @keyframes c4-sheen { 0%, 45% { transform: translateX(-70%); } 100% { transform: translateX(70%); } }
-@keyframes c4-fog { 0%, 100% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(1.2); transform: scale(1.05); } }
 @keyframes c4-hint { 50% { box-shadow: 0 0 46px rgba(255, 214, 10, 1), inset 0 0 30px rgba(255, 214, 10, 0.6); } }
 @keyframes c4-hover { 50% { transform: translateY(calc(var(--cell, 30px) * -0.05)); } }
 @keyframes c4-draw { to { stroke-dashoffset: 0; } }

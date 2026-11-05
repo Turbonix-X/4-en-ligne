@@ -45,8 +45,8 @@ const MODES = [
   { key: "multi", icon: "🎉", name: "3 ou 4 joueurs", text: "Plus on est de fous… Celui qui aligne le premier gagne." },
   { key: "bomb", icon: "💣", name: "Bombe", text: "Une bombe par partie : elle fait exploser un pion adverse, à la place de ton coup." },
   { key: "misere", icon: "🙃", name: "Inversé", text: "Tout est à l’envers : si tu alignes tes pions, tu perds." },
-  { key: "crush", icon: "🪨", name: "Gravité", text: "Un pion avec 3 pions sur lui est écrasé et détruit." },
-  { key: "fog", icon: "🌫️", name: "Brouillard", text: "Tu ne vois que les cases autour de tes propres pions." },
+  { key: "crush", icon: "🪨", name: "Gravité", text: "Si 3 pions adverses s’empilent juste sur un de tes pions, ils l’écrasent et le détruisent." },
+  { key: "fog", icon: "🌫️", name: "Brouillard", text: "Un nuage couvre toute la grille. Il se dissipe autour de chaque pion que tu poses." },
   { key: "noGrav", icon: "🪐", name: "Sans gravité", text: "Plus rien ne tombe : pose ton pion sur la case que tu veux." },
 ];
 

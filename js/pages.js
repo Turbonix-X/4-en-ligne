@@ -23,11 +23,13 @@ function demoBoard({ b, line, bad, mark = [], arrow, ghost = [] }) {
   const colors = { X: ["#ffe45c", "#ffd60a", "#c9a200"], O: ["#c9b0ff", "#9b6dff", "#6f45d9"], R: ["#ff9db0", "#ff4d6d", "#b92a45"], V: ["#8ff5d0", "#2ee6a6", "#16a173"] };
   let holes = "";
   let pieces = "";
+  let clouds = "";
   rows.forEach((row, y) => [...row].forEach((ch, x) => {
     const cx = pad + (x + 0.5) * c, cy = top + pad + (y + 0.5) * c;
     holes += `M${cx - 16} ${cy}a16 16 0 1 0 32 0a16 16 0 1 0 -32 0Z`;
     if (ch === "?") {
-      pieces += `<rect x="${cx - 20}" y="${cy - 20}" width="40" height="40" rx="8" fill="#3a2f5e"/>`;
+      // Le nuage passe par-dessus la façade, d'un seul tenant
+      clouds += `<rect x="${cx - 21}" y="${cy - 21}" width="42" height="42" fill="#4a3d70"/>`;
       return;
     }
     if (ch === ".") return;
@@ -56,6 +58,7 @@ function demoBoard({ b, line, bad, mark = [], arrow, ghost = [] }) {
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-hidden="true">${arrow != null ? "" : ""}
     ${pieces}
     <path d="M0 ${top}H${W}V${H}H0Z${holes}" fill="#47298f" fill-rule="evenodd"/>
+    ${clouds}
     ${over}</svg>`;
 }
 

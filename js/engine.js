@@ -13,7 +13,7 @@
   const WALL = -2; // Pion caché par le brouillard, tel que l'ordi se le représente
   const BOMB = 1000;
   const SURRENDER = 2000;
-  const CRUSH_AT = 3; // Un pion avec 3 pions sur lui est détruit
+  const CRUSH_AT = 3; // Un pion avec 3 pions adverses juste sur lui est détruit
   const REPEATS = 3;
 
   const SIZES = [[5, 4], [6, 5], [7, 6], [8, 7], [9, 8], [10, 9]];
@@ -241,7 +241,8 @@
     return best;
   }
 
-  // Détruit les pions qui portent trop de poids. Renvoie vrai si quelque chose a changé.
+  // Un pion est détruit quand les 3 pions juste au-dessus de lui sont tous adverses.
+  // Tes propres pions ne t'écrasent jamais. Renvoie vrai si quelque chose a changé.
   function crush(s, ev) {
     const n = laneCount(s);
     const items = [];
@@ -249,8 +250,17 @@
       const cells = laneCells(s, l);
       let height = 0;
       while (height < cells.length && s.own[cells[height]] !== EMPTY) height++;
+      const doomed = [];
       for (let k = 0; k < height - CRUSH_AT; k++) {
-        const c = cells[k];
+        const p = s.own[cells[k]];
+        if (p < 0) continue;
+        let foreign = true;
+        for (let j = 1; j <= CRUSH_AT; j++) {
+          if (s.own[cells[k + j]] === p) { foreign = false; break; }
+        }
+        if (foreign) doomed.push(cells[k]);
+      }
+      for (const c of doomed) {
         items.push({ id: s.id[c], owner: s.own[c], x: c % s.w, y: (c / s.w) | 0 });
         removeAt(s, c);
       }
@@ -370,7 +380,7 @@
     }
     s.moves++;
 
-    // Le pion posé compte tout de suite : une ligne verticale reste possible en mode gravité
+    // Le pion posé compte tout de suite : si ton coup aligne, tu gagnes avant d'écraser quoi que ce soit
     if (resolve(s, mover, ev)) return s;
 
     if (o.crush) {

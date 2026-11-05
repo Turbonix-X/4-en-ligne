@@ -31,8 +31,8 @@ Le 4 en ligne en 2D ou en vraie 3D, avec un bot à 10 niveaux, un tournoi jusqu'
 - 🎉 **3 ou 4 joueurs**.
 - 💣 **Bombe** : une par partie, pour faire exploser un pion adverse.
 - 🙃 **Inversé** : aligner fait perdre.
-- 🪨 **Gravité** : un pion avec 3 pions sur lui est écrasé.
-- 🌫️ **Brouillard** : on ne voit que les cases autour de ses pions. L'ordi ne triche pas.
+- 🪨 **Gravité** : un pion avec 3 pions adverses juste sur lui est écrasé.
+- 🌫️ **Brouillard** : un nuage couvre toute la grille et se dissipe autour de chaque pion que tu poses. L'ordi ne triche pas.
 - 🪐 **Sans gravité** : on pose son pion où on veut.
 
 ## Le reste

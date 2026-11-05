@@ -27,7 +27,7 @@ class Board2D {
         <i class="tok b2d-ghost"></i>
         <div class="b2d-tokens"></div>
         <svg class="b2d-plate" aria-hidden="true"></svg>
-        <div class="b2d-fog"></div>
+        <canvas class="b2d-fog" aria-hidden="true"></canvas>
         <i class="b2d-aim"></i>
         <svg class="b2d-win" aria-hidden="true"></svg>
       </div>`;
@@ -35,7 +35,8 @@ class Board2D {
     this.boardEl = this.root.querySelector(".b2d-board");
     this.tokensEl = this.root.querySelector(".b2d-tokens");
     this.plateEl = this.root.querySelector(".b2d-plate");
-    this.fogEl = this.root.querySelector(".b2d-fog");
+    this.fog = new FogField(this.root.querySelector(".b2d-fog"));
+    this.alive = true;
     this.ghostEl = this.root.querySelector(".b2d-ghost");
     this.laneEl = this.root.querySelector(".b2d-lane");
     this.hintEl = this.root.querySelector(".b2d-hint");
@@ -63,6 +64,7 @@ class Board2D {
 
   destroy() {
     this.gen++;
+    this.alive = false;
     this.ro.disconnect();
     this.host.innerHTML = "";
   }
@@ -216,23 +218,36 @@ class Board2D {
     if (!this.win) this.winEl.innerHTML = "";
   }
 
+  // Le nuage couvre toute la grille : il garde en mémoire ce qui est dégagé et se dissipe tout seul
   drawFog() {
     const s = this.state;
-    this.fogEl.innerHTML = "";
+    if (!s.o.fog) { this.fog.stop(); return; }
+    this.fog.setup(s.w, s.h, this.cell);
+    const c = this.fog.canvas;
+    Object.assign(c.style, {
+      left: -this.fog.pad * this.cell + "px",
+      top: -this.fog.pad * this.cell + "px",
+      width: c.width + "px",
+      height: c.height + "px",
+    });
     if (this.rotating) return;
-    const mask = this.mask();
-    if (!mask) return;
-    const c = this.cell;
-    const frag = document.createDocumentFragment();
-    for (let y = 0; y < s.h; y++) {
-      for (let x = 0; x < s.w; x++) {
-        if (mask[x + y * s.w]) continue;
-        const f = document.createElement("i");
-        f.style.cssText = `left:${x * c - c * 0.06}px;top:${y * c - c * 0.06}px;width:${c * 1.12}px;height:${c * 1.12}px;animation-delay:${-((x * 7 + y * 13) % 9)}s`;
-        frag.appendChild(f);
-      }
-    }
-    this.fogEl.appendChild(frag);
+    // Quand on passe l'écran à un autre joueur, il ne doit rien voir apparaître progressivement
+    const viewer = this.view.viewer;
+    const instant = viewer !== this.fog.viewer;
+    this.fog.viewer = viewer;
+    this.fog.setMask(this.mask(), instant);
+    this.runFog();
+  }
+
+  runFog() {
+    if (this.fogRunning) return;
+    this.fogRunning = true;
+    const tick = (t) => {
+      if (!this.alive || !this.fog.active) { this.fogRunning = false; return; }
+      this.fog.draw(t);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   }
 
   applyMarks() {
@@ -526,6 +541,7 @@ class Board2D {
     view.w = ev.w; view.h = ev.h;
     this.state = view;
     this.rotating = true;
+    if (this.state.o.fog && this.fog.reveal) this.fog.rotate();
     this.tokens.forEach((t) => {
       const nx = ev.h0 - 1 - t.y, ny = t.x;
       t.x = nx; t.y = ny;

@@ -1,4 +1,216 @@
-// ===== Petits outils d'affichage communs : couleurs, particules, confettis, attentes =====
+// ===== Petits outils d'affichage communs : couleurs, particules, confettis, attentes, brouillard =====
+
+// Le brouillard : un seul nuage sur toute la grille, dessiné sur un canvas (2D) ou une texture (3D).
+// Il se dissipe en douceur autour des cases visibles, avec quelques volutes quand il s'écarte.
+class FogField {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.w = 0;
+    this.h = 0;
+    this.cell = 0;
+    this.pad = 0.5;
+    this.reveal = null;
+    this.target = null;
+    this.puffs = [];
+    this.active = false;
+    this.last = 0;
+    this.viewer = undefined;
+  }
+
+  // Une texture de nuages qui se répète sans raccord
+  static tile() {
+    if (FogField._tile) return FogField._tile;
+    const size = 512;
+    const c = document.createElement("canvas");
+    c.width = c.height = size;
+    const g = c.getContext("2d");
+    const blob = (x, y, r, color) => {
+      for (const ox of [-size, 0, size]) {
+        for (const oy of [-size, 0, size]) {
+          const grad = g.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, r);
+          grad.addColorStop(0, color);
+          grad.addColorStop(1, "rgba(0,0,0,0)");
+          g.fillStyle = grad;
+          g.fillRect(x + ox - r, y + oy - r, r * 2, r * 2);
+        }
+      }
+    };
+    for (let k = 0; k < 70; k++) {
+      const light = k % 3 !== 0;
+      const color = light ? `rgba(${150 + (k % 5) * 12},${132 + (k % 5) * 10},${205 + (k % 4) * 10},.16)` : "rgba(14,9,32,.22)";
+      blob(Math.random() * size, Math.random() * size, 50 + Math.random() * 110, color);
+    }
+    FogField._tile = c;
+    return c;
+  }
+
+  static brush(size, inner, color) {
+    const c = document.createElement("canvas");
+    c.width = c.height = Math.max(4, Math.ceil(size));
+    const g = c.getContext("2d");
+    const r = c.width / 2;
+    const grad = g.createRadialGradient(r, r, 0, r, r, r);
+    grad.addColorStop(0, color);
+    grad.addColorStop(inner, color);
+    grad.addColorStop(1, color.replace(/[\d.]+\)$/, "0)"));
+    g.fillStyle = grad;
+    g.fillRect(0, 0, c.width, c.height);
+    return c;
+  }
+
+  setup(w, h, cell) {
+    if (w !== this.w || h !== this.h) {
+      this.w = w;
+      this.h = h;
+      this.reveal = new Float32Array(w * h);
+      this.target = new Float32Array(w * h);
+      this.puffs = [];
+    }
+    if (cell !== this.cell || this.canvas.width !== Math.round((w + this.pad * 2) * cell)) {
+      this.cell = cell;
+      this.canvas.width = Math.round((w + this.pad * 2) * cell);
+      this.canvas.height = Math.round((h + this.pad * 2) * cell);
+      this.hole = FogField.brush(cell * 2.1, 0.46, "rgba(0,0,0,1)");
+      this.smoke = FogField.brush(cell * 1.6, 0.05, "rgba(205,190,245,.75)");
+    }
+  }
+
+  // mask : les cases visibles (null = plus de brouillard). instant : sans animation.
+  setMask(mask, instant = false) {
+    if (!this.reveal) return;
+    const n = this.reveal.length;
+    for (let c = 0; c < n; c++) {
+      const t = mask ? (mask[c] ? 1 : 0) : 1;
+      const was = this.target[c];
+      this.target[c] = t;
+      if (instant || Fx.reduced()) this.reveal[c] = t;
+      else if (t === 1 && was !== 1 && mask) this.addPuffs(c);
+    }
+    this.active = true;
+  }
+
+  addPuffs(c) {
+    if (this.puffs.length > 90) return;
+    const x = c % this.w, y = (c / this.w) | 0;
+    for (let k = 0; k < 3; k++) {
+      const a = Math.random() * Math.PI * 2;
+      this.puffs.push({
+        x: x + 0.5, y: y + 0.5,
+        vx: Math.cos(a) * (0.5 + Math.random() * 0.7),
+        vy: Math.sin(a) * (0.5 + Math.random() * 0.7),
+        life: 1,
+        speed: 0.9 + Math.random() * 0.5,
+      });
+    }
+  }
+
+  // Le quart de tour du mode rotation : les zones dégagées tournent avec la grille
+  rotate() {
+    const { w, h } = this;
+    const reveal = new Float32Array(w * h);
+    const target = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const t = (h - 1 - y) + x * h;
+        reveal[t] = this.reveal[x + y * w];
+        target[t] = this.target[x + y * w];
+      }
+    }
+    this.reveal = reveal;
+    this.target = target;
+    this.w = h;
+    this.h = w;
+    this.puffs = [];
+    this.cell = 0; // Le canvas sera refait à la bonne taille
+  }
+
+  stop() {
+    this.active = false;
+    this.puffs = [];
+    if (this.canvas.width) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  // Dessine une image. Renvoie faux quand il n'y a plus rien à dessiner.
+  draw(now) {
+    if (!this.active || !this.reveal) return false;
+    const dt = Math.min(0.1, (now - (this.last || now)) / 1000);
+    this.last = now;
+    let clear = true;
+    for (let c = 0; c < this.reveal.length; c++) {
+      const t = this.target[c];
+      const v = this.reveal[c];
+      if (v !== t) this.reveal[c] = t > v ? Math.min(t, v + dt * 1.5) : Math.max(t, v - dt * 0.9);
+      if (this.reveal[c] < 1 || t < 1) clear = false;
+    }
+    const { ctx, canvas, cell, pad } = this;
+    const W = canvas.width, H = canvas.height;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, W, H);
+    if (clear && !this.puffs.length) { this.active = false; return false; }
+
+    if (!clear) {
+      // Le nuage lui-même : une base sombre et deux couches qui glissent à des vitesses différentes
+      ctx.fillStyle = "#2d2350";
+      ctx.fillRect(0, 0, W, H);
+      const still = Fx.reduced();
+      if (!this.pattern) this.pattern = ctx.createPattern(FogField.tile(), "repeat");
+      const time = still ? 0 : now / 1000;
+      for (const [sx, sy, scale, alpha] of [[9, 4, 1, 1], [-14, 7, 0.65, 0.85]]) {
+        const dx = (time * sx) % 512, dy = (time * sy) % 512;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.scale(scale, scale);
+        ctx.translate(dx, dy);
+        ctx.fillStyle = this.pattern;
+        ctx.fillRect(-dx - 2, -dy - 2, W / scale + 4, H / scale + 4);
+        ctx.restore();
+      }
+      // Les trouées autour des cases visibles
+      ctx.globalCompositeOperation = "destination-out";
+      const size = this.hole.width;
+      for (let c = 0; c < this.reveal.length; c++) {
+        const v = this.reveal[c];
+        if (v <= 0) continue;
+        const px = (c % this.w + pad + 0.5) * cell, py = (((c / this.w) | 0) + pad + 0.5) * cell;
+        const k = v * v * (3 - 2 * v);
+        ctx.globalAlpha = k;
+        const s = size * (0.55 + 0.45 * k);
+        ctx.drawImage(this.hole, px - s / 2, py - s / 2, s, s);
+      }
+      // Un bord doux tout autour du nuage
+      ctx.globalAlpha = 1;
+      const edge = pad * cell * 0.75;
+      const fade = (x0, y0, x1, y1, rx, ry, rw, rh) => {
+        const g = ctx.createLinearGradient(x0, y0, x1, y1);
+        g.addColorStop(0, "rgba(0,0,0,1)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(rx, ry, rw, rh);
+      };
+      fade(0, 0, edge, 0, 0, 0, edge, H);
+      fade(W, 0, W - edge, 0, W - edge, 0, edge, H);
+      fade(0, 0, 0, edge, 0, 0, W, edge);
+      fade(0, H, 0, H - edge, 0, H - edge, W, edge);
+      ctx.globalCompositeOperation = "source-over";
+    }
+
+    // Les volutes qui s'échappent quand le nuage s'écarte
+    this.puffs = this.puffs.filter((p) => {
+      p.life -= dt * p.speed;
+      if (p.life <= 0) return false;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      const s = this.smoke.width * (1.5 - p.life * 0.8);
+      ctx.globalAlpha = p.life * p.life * 0.7;
+      ctx.drawImage(this.smoke, (p.x + pad) * cell - s / 2, (p.y + pad) * cell - s / 2, s, s);
+      return true;
+    });
+    ctx.globalAlpha = 1;
+    return true;
+  }
+}
 
 const Fx = (() => {
   const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
